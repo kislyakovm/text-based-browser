@@ -41,6 +41,8 @@ def print_site(url):
         print(bloomberg_com)
     elif url == 'nytimes.com':
         print(nytimes_com)
+    else:
+        print('Error')
 
 
 def main_func():

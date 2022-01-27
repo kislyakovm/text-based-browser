@@ -1,5 +1,7 @@
 import argparse, os, shutil, sys
 
+open_pages_list = []
+
 nytimes_com = '''
 This New Liquid Is Magnetic, and Mesmerizing
 
@@ -71,6 +73,12 @@ def main_func():
         elif url == 'nytimes.com':
             write_file_to_folder(file_name, nytimes_com)
 
+    elif url == 'back':
+        try:
+            print_text_from_file(open_pages_list[-2])
+        except IndexError:
+            pass
+
     elif is_site_in_file(url):
         print_text_from_file(url)
     else:
@@ -85,6 +93,7 @@ def write_file_to_folder(file_name, site_text):
     file_source = f"{os.getcwd()}\\"
     file_destination = f'{file_source}{folder_name}\\'
     os.replace(file_source + file_name, file_destination + file_name)
+    open_pages_list.append(file_name)
 
 
 def check_url(url):

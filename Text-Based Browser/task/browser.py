@@ -36,6 +36,19 @@ Twitter and Square Chief Executive Officer Jack Dorsey
 '''
 
 
+def delete_text_after_dot(url):
+    if '.' in url:
+        dot_index = url.find('.')
+        return url[:dot_index]
+
+
+def print_text_from_file(url):
+    file_address = f'{os.getcwd()}\\{folder_name}\\' + url
+    with open(file_address, "r") as file:
+        for line in file:
+            print(line)
+
+
 def print_site(url):
     if url == 'bloomberg.com':
         print(bloomberg_com)
@@ -49,22 +62,29 @@ def main_func():
     url = input()
 
     if check_url(url):
+
         print_site(url)
-    elif is_site_in_file():
-        pass
+        file_name = delete_text_after_dot(url)
+
+        if url == 'bloomberg.com':
+            write_file_to_folder(file_name, bloomberg_com)
+        elif url == 'nytimes.com':
+            write_file_to_folder(file_name, nytimes_com)
+
+    elif is_site_in_file(url):
+        print_text_from_file(url)
     else:
         print('Error: Incorrect URL')
 
 
-# def write_to_file():
-#     with open(f'') as file:
-#         pass
-#
-#
-# def arguments():
-#     parser = argparse.ArgumentParser()
-#
-#     parser.add_argument('')
+def write_file_to_folder(file_name, site_text):
+
+    with open(file_name, "w") as file:
+        file.write(site_text)
+
+    file_source = f"{os.getcwd()}\\"
+    file_destination = f'{file_source}{folder_name}\\'
+    os.replace(file_source + file_name, file_destination + file_name)
 
 
 def check_url(url):
@@ -86,8 +106,13 @@ def get_argument():
     return folder_name
 
 
-def is_site_in_file():
-    pass
+def is_site_in_file(url):
+
+    file_address = f'{os.getcwd()}\\{folder_name}\\' + url
+    if os.path.exists(file_address):
+        return True
+
+    return False
 
 
 if __name__ == '__main__':

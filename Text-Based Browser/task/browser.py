@@ -1,46 +1,14 @@
-import argparse, os, shutil, sys
+import codecs
+import os, sys, requests
 
 open_pages_list = []
 
-nytimes_com = '''
-This New Liquid Is Magnetic, and Mesmerizing
-
-Scientists have created “soft” magnets that can flow 
-and change shape, and that could be a boon to medicine 
-and robotics. (Source: New York Times)
-
-
-Most Wikipedia Profiles Are of Men. This Scientist Is Changing That.
-
-Jessica Wade has added nearly 700 Wikipedia biographies for
- important female and minority scientists in less than two 
- years.
-
-'''
-
-bloomberg_com = '''
-The Space Race: From Apollo 11 to Elon Musk
-
-It's 50 years since the world was gripped by historic images
- of Apollo 11, and Neil Armstrong -- the first man to walk 
- on the moon. It was the height of the Cold War, and the charts
- were filled with David Bowie's Space Oddity, and Creedence's 
- Bad Moon Rising. The world is a very different place than 
- it was 5 decades ago. But how has the space race changed since
- the summer of '69? (Source: Bloomberg)
-
-
-Twitter CEO Jack Dorsey Gives Talk at Apple Headquarters
-
-Twitter and Square Chief Executive Officer Jack Dorsey 
- addressed Apple Inc. employees at the iPhone maker’s headquarters
- Tuesday, a signal of the strong ties between the Silicon Valley giants.
-'''
-
 
 def delete_text_after_dot(url):
+    if 'https://' in url:
+        url = url.replace('https://', '', 1)
     if '.' in url:
-        dot_index = url.find('.')
+        dot_index = url.rfind('.')
         return url[:dot_index]
 
 
@@ -51,13 +19,17 @@ def print_text_from_file(url):
             print(line)
 
 
-def print_site(url):
-    if url == 'bloomberg.com':
-        print(bloomberg_com)
-    elif url == 'nytimes.com':
-        print(nytimes_com)
-    else:
-        print('Error')
+def parse_site(url):
+    if 'https://' not in url:
+        url = 'https://' + url
+
+    user_agent = 'Mozilla/5.0'
+    r = requests.get(url, headers={'User-Agent': user_agent})
+    return r.text
+
+
+def print_site(site_text):
+    print(site_text)
 
 
 def main_func():
@@ -65,13 +37,12 @@ def main_func():
 
     if check_url(url):
 
-        print_site(url)
+        site_text = parse_site(url)
+        print_site(site_text)
+
         file_name = delete_text_after_dot(url)
 
-        if url == 'bloomberg.com':
-            write_file_to_folder(file_name, bloomberg_com)
-        elif url == 'nytimes.com':
-            write_file_to_folder(file_name, nytimes_com)
+        write_file_to_folder(file_name, site_text)
 
     elif url == 'back':
         try:
@@ -86,8 +57,7 @@ def main_func():
 
 
 def write_file_to_folder(file_name, site_text):
-
-    with open(file_name, "w") as file:
+    with codecs.open(file_name, "w", "utf-8") as file:
         file.write(site_text)
 
     file_source = f"{os.getcwd()}\\"
@@ -116,7 +86,6 @@ def get_argument():
 
 
 def is_site_in_file(url):
-
     file_address = f'{os.getcwd()}\\{folder_name}\\' + url
     if os.path.exists(file_address):
         return True

@@ -21,57 +21,19 @@ def print_text_from_file(url):
 
 
 def parse_site(url):
-    text = ''
     if 'https://' not in url:
         url = 'https://' + url
 
     user_agent = 'Mozilla/5.0'
     r = requests.get(url, headers={'User-Agent': user_agent})
-
     soup = BeautifulSoup(r.content, 'html.parser')
-    paragraphs = soup.find_all('p')
-    for p in paragraphs:
-        text += p.text
 
-    head1 = soup.find_all('h1')
-    for h1 in head1:
-        text = text + h1.text + '\n'
+    tags_list = ['p', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li']
+    text = ''
 
-    head2 = soup.find_all('h2')
-    for h2 in head2:
-        text = text + h2.text + '\n'
-
-    head3 = soup.find_all('h3')
-    for h3 in head3:
-        text = text + h3.text + '\n'
-
-    head4 = soup.find_all('h4')
-    for h4 in head4:
-        text = text + h4.text + '\n'
-
-    head5 = soup.find_all('h5')
-    for h5 in head5:
-        text = text + h5.text + '\n'
-
-    head6 = soup.find_all('h6')
-    for h6 in head6:
-        text = text + h6.text + '\n'
-
-    links = soup.find_all('a')
-    for a in links:
-        text = text + a.text + '\n'
-
-    list1 = soup.find_all('ul')
-    for l1 in list1:
-        text = text + l1.text + '\n'
-
-    list2 = soup.find_all('ol')
-    for l2 in list2:
-        text = text + l2.text + '\n'
-
-    list3 = soup.find_all('li')
-    for l3 in list3:
-        text = text + l3.text + '\n'
+    tags = soup.find_all(tags_list)
+    for tag in tags:
+        text = text + tag.text + '\n'
 
     return text
 
